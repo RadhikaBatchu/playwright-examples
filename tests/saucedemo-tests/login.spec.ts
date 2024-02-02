@@ -8,7 +8,7 @@ test.beforeEach(async ({ page }) => {
 });
 
 test.describe("Login tests", () => {
-  test("Login with valid credentials", async ({ page }) => {
+  test("Valid credentials", async ({ page }) => {
     // best to keep sensitive stuff in .env files, but for simplicity sake hardcoding it here
     const username = "standard_user";
     const password = "secret_sauce";
@@ -21,7 +21,7 @@ test.describe("Login tests", () => {
     await expect(page).toHaveURL(/inventory/);
   });
 
-  test("With invalid credentials", async ({ page }) => {
+  test("Invalid credentials", async ({ page }) => {
     // best to keep sensitive stuff in .env files, but for simplicity sake hardcoding it here
     const username = "wrong_user";
     const password = "wrong_password";
@@ -34,6 +34,24 @@ test.describe("Login tests", () => {
     const errorContainer = page.getByTestId("error");
     const errorMessage = page.getByText(
       "Epic sadface: Username and password do not match any user in this service"
+    );
+
+    await expect(errorContainer).toBeVisible();
+    await expect(errorMessage).toBeVisible();
+  });
+
+  test("Locked user", async ({ page }) => {
+    const username = "locked_out_user";
+    const password = "secret_sauce";
+
+    await loginSaucedemo(page, {
+      password,
+      username,
+    });
+
+    const errorContainer = page.getByTestId("error");
+    const errorMessage = page.getByText(
+      "Epic sadface: Sorry, this user has been locked out."
     );
 
     await expect(errorContainer).toBeVisible();
