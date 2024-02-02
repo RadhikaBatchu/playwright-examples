@@ -5,19 +5,19 @@ test.beforeEach(async ({ page }) => {
   // Also would be nice to put it in an .env variable for easier configuration
   // when running on ci or targeting specific environments
   await page.goto("https://saucedemo.com");
+
+  // best to keep sensitive stuff in .env files, but for simplicity sake hardcoding it here
+  const username = "standard_user";
+  const password = "secret_sauce";
+
+  await loginSaucedemo(page, {
+    password,
+    username,
+  });
 });
 
 test.describe("Cart tests", () => {
   test("Add to cart and checkout", async ({ page }) => {
-    // best to keep sensitive stuff in .env files, but for simplicity sake hardcoding it here
-    const username = "standard_user";
-    const password = "secret_sauce";
-
-    await loginSaucedemo(page, {
-      password,
-      username,
-    });
-
     const itemSelector = "sauce-labs-backpack";
 
     // This won't always work in real life since we won't know what the api returns
@@ -67,14 +67,6 @@ test.describe("Cart tests", () => {
   });
 
   test("Checkout empty cart", async ({ page }) => {
-    const username = "standard_user";
-    const password = "secret_sauce";
-
-    await loginSaucedemo(page, {
-      password,
-      username,
-    });
-
     const goToCartButton = page.locator("#shopping_cart_container a");
 
     await goToCartButton.click();
